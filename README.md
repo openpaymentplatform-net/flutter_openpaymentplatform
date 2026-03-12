@@ -1,7 +1,7 @@
 
 # openpaymentplatform_flutter
 
-A Flutter package that provides integration with the [OpenPaymentPlatform Payment Platform](https://checkout.transakcia.com) via WebView. It supports full-cycle operations including payment initialization, redirect handling, status checking, refunding, and voiding.
+A Flutter package that provides integration with the OpenPaymentPlatform via WebView. It supports full-cycle operations including payment initialization, redirect handling, status checking, refunding, and voiding.
 
 ---
 
@@ -22,7 +22,7 @@ Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  openpaymentplatform_flutter: ^1.0.0
+  openpaymentplatform_flutter: ^1.0.1
 ```
 
 Then run:
@@ -77,7 +77,7 @@ void initState() {
   super.initState();
 
   OpenPaymentPlatform().initialize(
-    backendUrl: 'https://checkout.transakcia.com',
+    backendUrl: 'your-url',
     merchantKey: 'your-merchant-key',
     password: 'your-password',
   );
