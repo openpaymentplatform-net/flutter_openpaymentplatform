@@ -2,44 +2,53 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../../akurateco_flutter.dart';
-import '../models/akurateco_void.dart';
+import '../exceptions/exceptions.dart';
+import '../models/checkout/openpaymentplatform_request.dart';
+import '../models/openpaymentplatform_void.dart';
 import '../models/check_status_model.dart';
 import '../utils/hash_utils.dart';
 
-/// A service class for handling HTTP requests to the Akurateco backend.
+/// A service class for handling HTTP requests to the OpenPaymentPlatform backend.
 ///
-/// This class provides methods to interact with the Akurateco API, including
+/// This class provides methods to interact with the OpenPaymentPlatform API, including
 /// fetching payment URLs, checking payment statuses, processing refunds, and
 /// voiding payments.
 class HttpServiceService {
-  /// The base URL of the Akurateco backend.
+  /// The base URL of the OpenPaymentPlatform backend.
   final String backendUrl;
 
-  /// The merchant key used for authentication with the Akurateco backend.
+  /// The merchant key used for authentication with the OpenPaymentPlatform backend.
   final String merchantKey;
+
+  /// The password used for secure communication with the OpenPaymentPlatform backend.
+  final String password;
 
   /// Creates an instance of `HttpServiceService`.
   ///
-  /// - [backendUrl]: The base URL of the Akurateco backend.
+  /// - [backendUrl]: The base URL of the OpenPaymentPlatform backend.
   /// - [merchantKey]: The merchant key for authentication.
-  HttpServiceService({required this.backendUrl, required this.merchantKey});
+  /// - [password]: The password for secure communication.
+  HttpServiceService({
+    required this.backendUrl,
+    required this.merchantKey,
+    required this.password,
+  });
 
   /// Fetches the payment URL for a given payment request.
   ///
-  /// This method sends the payment request to the Akurateco backend and retrieves
+  /// This method sends the payment request to the OpenPaymentPlatform backend and retrieves
   /// the URL where the user can complete the payment process.
   ///
-  /// - [request]: The `AkuratecoRequest` object containing payment details.
+  /// - [request]: The `OpenPaymentPlatformRequest` object containing payment details.
   /// - Returns: A `Future` that resolves to the payment URL as a `String`.
   /// - Throws: `PaymentBackendException` if the server returns an error,
   ///   or `PaymentInitializationException` for unexpected errors.
-  Future<String> fetchPaymentUrl(AkuratecoRequest request) async {
+  Future<String> fetchPaymentUrl(OpenPaymentPlatformRequest request) async {
     var body = request.toJson();
     body['merchant_key'] = merchantKey;
-    body['hash'] = AkuratecoHashUtils.generateCheckoutHash(
+    body['hash'] = OpenPaymentPlatformHashUtils.generateCheckoutHash(
       order: request.order,
-      password: Akurateco().password,
+      password: password,
     );
 
     try {
@@ -72,7 +81,7 @@ class HttpServiceService {
 
   /// Checks the status of a payment.
   ///
-  /// This method queries the Akurateco backend to retrieve the current status
+  /// This method queries the OpenPaymentPlatform backend to retrieve the current status
   /// of a payment using the provided payment ID or order ID.
   ///
   /// - [paymentId]: The unique identifier of the payment (optional).
@@ -88,9 +97,9 @@ class HttpServiceService {
       'merchant_key': merchantKey,
       if (paymentId != null) 'payment_id': paymentId,
       if (orderId != null) 'order_id': orderId,
-      'hash': AkuratecoHashUtils.generatePaymentIdHash(
+      'hash': OpenPaymentPlatformHashUtils.generatePaymentIdHash(
         id: paymentId ?? orderId!,
-        password: Akurateco().password,
+        password: password,
       ),
     };
 
@@ -106,7 +115,6 @@ class HttpServiceService {
       }
 
       final data = jsonDecode(response.body);
-      print(data);
       return CheckStatusResult.fromJson(data);
     } catch (e) {
       if (e is PaymentException) rethrow;
@@ -116,7 +124,7 @@ class HttpServiceService {
 
   /// Processes a refund for a payment.
   ///
-  /// This method sends a refund request to the Akurateco backend for the specified
+  /// This method sends a refund request to the OpenPaymentPlatform backend for the specified
   /// payment ID and amount.
   ///
   /// - [paymentId]: The unique identifier of the payment to be refunded.
@@ -132,10 +140,10 @@ class HttpServiceService {
       'merchant_key': merchantKey,
       'payment_id': paymentId,
       'amount': amount,
-      'hash': AkuratecoHashUtils.generateRefundHash(
+      'hash': OpenPaymentPlatformHashUtils.generateRefundHash(
         paymentId: paymentId,
         amount: amount,
-        password: Akurateco().password,
+        password: password,
       ),
     };
 
@@ -151,7 +159,6 @@ class HttpServiceService {
       }
 
       final data = jsonDecode(response.body);
-      print(data);
       return data['result'] ?? 'Unknown result';
     } catch (e) {
       if (e is PaymentException) rethrow;
@@ -161,20 +168,21 @@ class HttpServiceService {
 
   /// Voids a payment.
   ///
-  /// This method sends a void request to the Akurateco backend for the specified
+  /// This method sends a void request to the OpenPaymentPlatform backend for the specified
   /// payment ID.
   ///
   /// - [paymentId]: The unique identifier of the payment to be voided.
-  /// - Returns: A `Future` that resolves to an `AkuratecoVoid` object indicating the result of the void operation.
+  /// - Returns: A `Future` that resolves to an `OpenPaymentPlatformVoid` object indicating the result of the void operation.
   /// - Throws: `PaymentBackendException` if the server returns an error,
   ///   or `PaymentInitializationException` for unexpected errors.
-  Future<AkuratecoVoid> voidOperation({required String paymentId}) async {
+  Future<OpenPaymentPlatformVoid> voidOperation(
+      {required String paymentId}) async {
     var body = {
       'merchant_key': merchantKey,
       'payment_id': paymentId,
-      'hash': AkuratecoHashUtils.generatePaymentIdHash(
+      'hash': OpenPaymentPlatformHashUtils.generatePaymentIdHash(
         id: paymentId,
-        password: Akurateco().password,
+        password: password,
       ),
     };
 
@@ -190,7 +198,7 @@ class HttpServiceService {
       }
 
       final data = jsonDecode(response.body);
-      return AkuratecoVoid.fromJson(data);
+      return OpenPaymentPlatformVoid.fromJson(data);
     } catch (e) {
       if (e is PaymentException) rethrow;
       throw PaymentInitializationException('Unexpected error: $e');

@@ -1,6 +1,6 @@
-name: akurateco_flutter
-homepage: https://akurateco.com/
-description: "A simple Akurateco API wrapper"
+name: openpaymentplatform_flutter
+homepage: https://openpaymentplatform.net/
+description: "A simple OpenPaymentPlatform API wrapper"
 
 version: 1.0.0+1
 

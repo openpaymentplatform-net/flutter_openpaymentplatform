@@ -1,8 +1,8 @@
-/// A model class representing an order in the Akurateco system.
+/// A model class representing an order in the OpenPaymentPlatform system.
 ///
 /// This class encapsulates the details of an order, including its number, amount,
 /// currency, and description.
-class AkuratecoOrder {
+class OpenPaymentPlatformOrder {
   ///Required
   /// max: 255
   /// [a-z A-Z 0-9 -!"#$%&'()*+,./:;&@]
@@ -43,55 +43,32 @@ class AkuratecoOrder {
   /// A description of the order.
   final String description;
 
-  /// Creates an instance of `AkuratecoOrder`.
-  ///
-  /// - [number]: The unique identifier of the order.
-  /// - [amount]: The total amount of the order.
-  /// - [currency]: The currency of the order.
-  /// - [description]: A description of the order.
-  const AkuratecoOrder({
+  /// Creates an instance of `OpenPaymentPlatformOrder`.
+  const OpenPaymentPlatformOrder({
     required this.number,
     required this.amount,
     required this.currency,
     required this.description,
   });
 
-  /// Creates an `AkuratecoOrder` instance from a JSON map.
-  ///
-  /// This factory constructor parses the provided JSON map to initialize
-  /// an `AkuratecoOrder` object.
-  ///
-  /// - [json]: A `Map<String, dynamic>` containing the order data.
-  /// - Returns: An `AkuratecoOrder` instance.
-  factory AkuratecoOrder.fromJson(Map<String, dynamic> json) => AkuratecoOrder(
-    number: json['number'],
-    amount: json['amount'],
-    currency: json['currency'],
-    description: json['description'],
-  );
+  /// Creates an `OpenPaymentPlatformOrder` instance from a JSON map.
+  factory OpenPaymentPlatformOrder.fromJson(Map<String, dynamic> json) =>
+      OpenPaymentPlatformOrder(
+        number: json['number'],
+        amount: json['amount'],
+        currency: json['currency'],
+        description: json['description'],
+      );
 
-  /// Converts the `AkuratecoOrder` instance to a JSON-compatible map.
-  ///
-  /// This method serializes the order details into a map that can be
-  /// used for JSON encoding.
-  ///
-  /// - Returns: A `Map<String, dynamic>` representing the serialized order.
+  /// Converts the `OpenPaymentPlatformOrder` instance to a JSON-compatible map.
   Map<String, dynamic> toJson() => {
-    'number': number,
-    'amount': amount,
-    'currency': currency,
-    'description': description,
-  };
+        'number': number,
+        'amount': amount,
+        'currency': currency,
+        'description': description,
+      };
 
   /// Validates the order details.
-  ///
-  /// This method checks if the order details meet the required criteria:
-  /// - `number` must be non-empty and have a maximum length of 255 characters.
-  /// - `amount` must be a valid positive number and have a maximum length of 255 characters.
-  /// - `currency` must match the pattern for 3-6 uppercase letters.
-  /// - `description` must have a length between 2 and 1024 characters.
-  ///
-  /// - Returns: `true` if all details are valid, otherwise `false`.
   bool isValid() {
     final numberValid = number.isNotEmpty && number.length <= 255;
 

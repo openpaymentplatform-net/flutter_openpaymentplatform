@@ -1,25 +1,27 @@
-import 'package:akurateco_flutter/akurateco_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'checkout_controller.dart';
 import 'exceptions/exceptions.dart';
+import 'openpaymentplatform.dart';
 
-/// A widget that provides a WebView-based checkout experience for Akurateco payments.
-class AkuratecoCheckout extends StatefulWidget {
+/// A widget that provides a WebView-based checkout experience for OpenPaymentPlatform payments.
+class OpenPaymentPlatformCheckout extends StatefulWidget {
   /// The controller that manages the payment process and callbacks.
   final CheckoutController controller;
 
-  /// Creates an instance of [AkuratecoCheckout].
+  /// Creates an instance of [OpenPaymentPlatformCheckout].
   ///
   /// [controller] is required to handle the payment flow and callbacks.
-  const AkuratecoCheckout({super.key, required this.controller});
+  const OpenPaymentPlatformCheckout({super.key, required this.controller});
 
   @override
-  State<AkuratecoCheckout> createState() => _AkuratecoCheckoutState();
+  State<OpenPaymentPlatformCheckout> createState() =>
+      _OpenPaymentPlatformCheckoutState();
 }
 
-class _AkuratecoCheckoutState extends State<AkuratecoCheckout> {
+class _OpenPaymentPlatformCheckoutState
+    extends State<OpenPaymentPlatformCheckout> {
   /// The WebViewController is used to control the WebView widget.
   late final WebViewController _webViewController;
 
@@ -33,26 +35,21 @@ class _AkuratecoCheckoutState extends State<AkuratecoCheckout> {
 
   /// Configures the WebViewController with JavaScript support and navigation handling.
   void _initWebViewController() {
-    _webViewController =
-        WebViewController()
-          ..setJavaScriptMode(
-            JavaScriptMode.unrestricted,
-          ) // Enable JavaScript for the WebView.
-          ..setNavigationDelegate(
-            NavigationDelegate(
-              // Handle navigation requests (e.g., success, error, or cancel URLs).
-              onNavigationRequest: _handleNavigationRequest,
-              // Handle errors that occur during WebView navigation.
-              onWebResourceError: _handleWebError,
-            ),
-          );
+    _webViewController = WebViewController()
+      ..setJavaScriptMode(
+        JavaScriptMode.unrestricted,
+      ) // Enable JavaScript for the WebView.
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          // Handle navigation requests (e.g., success, error, or cancel URLs).
+          onNavigationRequest: _handleNavigationRequest,
+          // Handle errors that occur during WebView navigation.
+          onWebResourceError: _handleWebError,
+        ),
+      );
   }
 
   /// Handles navigation requests and triggers appropriate callbacks based on the URL.
-  ///
-  /// This method checks the URL being navigated to and determines if it matches
-  /// the success, error, or cancel URLs. If a match is found, the corresponding
-  /// callback is triggered, and navigation is prevented.
   NavigationDecision _handleNavigationRequest(NavigationRequest request) {
     final url = request.url;
 
@@ -78,9 +75,6 @@ class _AkuratecoCheckoutState extends State<AkuratecoCheckout> {
   }
 
   /// Handles WebView errors and triggers the error callback.
-  ///
-  /// This method is called when an error occurs during WebView navigation.
-  /// It creates a `PaymentWebViewException` and passes it to the error callback.
   void _handleWebError(WebResourceError error) {
     widget.controller.onError?.call(
       PaymentWebViewException('WebView error: ${error.description}'),
@@ -88,14 +82,10 @@ class _AkuratecoCheckoutState extends State<AkuratecoCheckout> {
   }
 
   /// Initializes the payment process by fetching the payment URL and loading it in the WebView.
-  ///
-  /// This method uses the `Akurateco` instance to fetch the payment URL based on
-  /// the provided `AkuratecoRequest`. If the URL is successfully fetched, it is
-  /// loaded into the WebView. If an error occurs, the appropriate error callback is triggered.
   Future<void> _initializePayment() async {
     try {
-      // Fetch the payment URL from the Akurateco service.
-      final url = await Akurateco().fetchPaymentUrl(
+      // Fetch the payment URL from the OpenPaymentPlatform service.
+      final url = await OpenPaymentPlatform().fetchPaymentUrl(
         widget.controller.paymentRequest,
       );
       // Load the fetched URL into the WebView.

@@ -1,6 +1,6 @@
-## 1.0.0
+## 1.0.0+1
 
-- Initial release of the `flutter_akurateco` package.
+- Initial release of the `openpaymentplatform_flutter` package.
 - Added support for checkout.
 - Included refund operation.
 - Included void operation.

@@ -1,7 +1,7 @@
 
-# flutter_akurateco
+# openpaymentplatform_flutter
 
-A Flutter package that provides integration with the [Akurateco Payment Platform](https://checkout.transakcia.com) via WebView. It supports full-cycle operations including payment initialization, redirect handling, status checking, refunding, and voiding.
+A Flutter package that provides integration with the [OpenPaymentPlatform Payment Platform](https://checkout.transakcia.com) via WebView. It supports full-cycle operations including payment initialization, redirect handling, status checking, refunding, and voiding.
 
 ---
 
@@ -22,7 +22,7 @@ Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_akurateco: ^1.0.0
+  openpaymentplatform_flutter: ^1.0.0
 ```
 
 Then run:
@@ -36,7 +36,7 @@ flutter pub get
 ### 2. Initialize the SDK
 
 ```dart
-Akurateco().initialize(
+OpenPaymentPlatform().initialize(
   backendUrl: 'backend-url',
   merchantKey: 'your-merchant-key',
   password: 'your-api-password',
@@ -49,46 +49,46 @@ Akurateco().initialize(
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_akurateco/akurateco_flutter.dart';
+import 'package:openpaymentplatform_flutter/openpaymentplatform_flutter.dart';
 
-void main() => runApp(const AkuratecoExampleApp());
+void main() => runApp(const OpenPaymentPlatformExampleApp());
 
-class AkuratecoExampleApp extends StatelessWidget {
-  const AkuratecoExampleApp({super.key});
+class OpenPaymentPlatformExampleApp extends StatelessWidget {
+  const OpenPaymentPlatformExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Akurateco Flutter Example',
+      title: 'OpenPaymentPlatform Flutter Example',
       home: Scaffold(
-        appBar: AppBar(title: const Text('Akurateco Example')),
-        body: const Center(child: AkuratecoDemo()),
+        appBar: AppBar(title: const Text('OpenPaymentPlatform Example')),
+        body: const Center(child: OpenPaymentPlatformDemo()),
       ),
     );
   }
 }
 ```
 
-Inside `AkuratecoDemo`:
+Inside `OpenPaymentPlatformDemo`:
 
 ```dart
 @override
 void initState() {
   super.initState();
 
-  Akurateco().initialize(
+  OpenPaymentPlatform().initialize(
     backendUrl: 'https://checkout.transakcia.com',
     merchantKey: 'your-merchant-key',
     password: 'your-password',
   );
 
-  var request = AkuratecoRequest(
-    operation: AkuratecoOperation.purchase,
+  var request = OpenPaymentPlatformRequest(
+    operation: OpenPaymentPlatformOperation.purchase,
     successUrl: "https://example.com/success",
     cancelUrl: "https://example.com/cancel",
     errorUrl: "https://example.com/error",
     expiryUrl: "https://example.com/expiry",
-    order: AkuratecoOrder(
+    order: OpenPaymentPlatformOrder(
       number: "order-1234",
       amount: "100.00",
       currency: "USD",
@@ -127,7 +127,7 @@ showDialog(
     child: SizedBox(
       width: 400,
       height: 600,
-      child: AkuratecoCheckout(controller: _controller),
+      child: OpenPaymentPlatformCheckout(controller: _controller),
     ),
   ),
 );
@@ -140,14 +140,14 @@ showDialog(
 ### Check Payment Status
 
 ```dart
-final status = await Akurateco().checkStatus(paymentId: '123');
+final status = await OpenPaymentPlatform().checkStatus(paymentId: '123');
 print('Status: ${status.status}');
 ```
 
 ### Refund Payment
 
 ```dart
-final result = await Akurateco().refundPayment(
+final result = await OpenPaymentPlatform().refundPayment(
   paymentId: '123',
   amount: '100.00',
 );
@@ -156,7 +156,7 @@ final result = await Akurateco().refundPayment(
 ### Void Payment
 
 ```dart
-final result = await Akurateco().voidPayment(paymentId: '123');
+final result = await OpenPaymentPlatform().voidPayment(paymentId: '123');
 ```
 
 ---

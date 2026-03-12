@@ -1,4 +1,4 @@
-/// A model class representing a customer in the Akurateco system.
+/// A model class representing a customer in the OpenPaymentPlatform system.
 ///
 /// This class encapsulates the customer's details, including their name, email,
 /// and an optional digital wallet identifier.

@@ -1,46 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:akurateco_flutter/akurateco_flutter.dart';
+import 'package:openpaymentplatform_flutter/openpaymentplatform_flutter.dart';
 
 void main() {
-  runApp(const AkuratecoExampleApp());
+  runApp(const OpenPaymentPlatformExampleApp());
 }
 
-class AkuratecoExampleApp extends StatelessWidget {
-  const AkuratecoExampleApp({super.key});
+class OpenPaymentPlatformExampleApp extends StatelessWidget {
+  const OpenPaymentPlatformExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Akurateco Flutter Example',
+      title: 'OpenPaymentPlatform Flutter Example',
       home: Scaffold(
-        appBar: AppBar(title: const Text('Akurateco Example')),
-        body: const Center(child: AkuratecoDemo()),
+        appBar: AppBar(title: const Text('OpenPaymentPlatform Example')),
+        body: const Center(child: OpenPaymentPlatformDemo()),
       ),
     );
   }
 }
 
-class AkuratecoDemo extends StatefulWidget {
-  const AkuratecoDemo({super.key});
+class OpenPaymentPlatformDemo extends StatefulWidget {
+  const OpenPaymentPlatformDemo({super.key});
 
   @override
-  State<AkuratecoDemo> createState() => _AkuratecoDemoState();
+  State<OpenPaymentPlatformDemo> createState() =>
+      _OpenPaymentPlatformDemoState();
 }
 
-class _AkuratecoDemoState extends State<AkuratecoDemo> {
+class _OpenPaymentPlatformDemoState extends State<OpenPaymentPlatformDemo> {
   late final CheckoutController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    Akurateco().initialize(
+    OpenPaymentPlatform().initialize(
       backendUrl: 'https://example.com',
       merchantKey: 'merchant key',
       password: 'password',
     );
 
-    var request = createAkuratecoRequest();
+    final request = createOpenPaymentPlatformRequest();
     _controller = CheckoutController(
       paymentRequest: request,
       onSuccessRedirect: (url) {
@@ -52,18 +53,18 @@ class _AkuratecoDemoState extends State<AkuratecoDemo> {
     );
   }
 
-  AkuratecoRequest createAkuratecoRequest() {
-    var akuratecoOrder = const AkuratecoOrder(
+  OpenPaymentPlatformRequest createOpenPaymentPlatformRequest() {
+    const order = OpenPaymentPlatformOrder(
       number: "order-1234",
       amount: "100.00",
       currency: "USD",
       description: "Example purchase",
     );
 
-    return AkuratecoRequest(
-      operation: AkuratecoOperation.purchase,
+    return OpenPaymentPlatformRequest(
+      operation: OpenPaymentPlatformOperation.purchase,
       successUrl: "https://example.com/success",
-      order: akuratecoOrder,
+      order: order,
     );
   }
 
@@ -80,7 +81,7 @@ class _AkuratecoDemoState extends State<AkuratecoDemo> {
                 child: SizedBox(
                   width: 400,
                   height: 600,
-                  child: AkuratecoCheckout(controller: _controller),
+                  child: OpenPaymentPlatformCheckout(controller: _controller),
                 ),
               ),
             );

@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  akurateco_flutter:
+  openpaymentplatform_flutter:
     path: ../
 
 
