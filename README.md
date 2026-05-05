@@ -22,7 +22,7 @@ Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  openpaymentplatform_flutter: ^1.0.1
+  openpaymentplatform_flutter: ^1.0.4
 ```
 
 Then run:
