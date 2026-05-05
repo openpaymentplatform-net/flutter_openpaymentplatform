@@ -170,3 +170,47 @@ final result = await OpenPaymentPlatform().voidPayment(paymentId: '123');
 | `onErrorRedirect`   | Called on error URL redirect             |
 | `onRedirectCallback`| Called on **any** redirect URL           |
 | `onError`           | Called on WebView or initialization error|
+
+## 3DS App-to-App Redirects
+
+Some 3DS providers redirect from WebView to a banking app (custom URL scheme),
+then return back to your app via deep link or universal link.
+
+### How it works
+
+1. `OpenPaymentPlatformCheckout` intercepts external-scheme URLs and calls
+   `onRedirectCallback`.
+2. Your app opens that URL externally (for example with `url_launcher`).
+3. After authentication in the banking app, your app receives a return URL.
+4. Pass the returned URL into `CheckoutController.handleExternalRedirect(url)`.
+5. Controller will trigger success/error/cancel callbacks or continue WebView
+   flow when needed.
+
+### Handling external redirect URL
+
+```dart
+onRedirectCallback: (url) async {
+  // Usually a custom scheme like bankapp://...
+  await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+},
+```
+
+### Handling app return deep link
+
+Use your deep link listener (`app_links`, `uni_links`, or platform channel) and
+forward incoming URL to checkout controller:
+
+```dart
+void onIncomingDeepLink(String url) {
+  _controller.handleExternalRedirect(url);
+}
+```
+
+### Notes
+
+- Configure Android/iOS deep link setup for your return URL scheme/host.
+- `successUrl`, `cancelUrl`, and `errorUrl` should match backend redirect
+  configuration.
+- If a returned URL is not terminal, checkout will continue loading it in
+  WebView.
+

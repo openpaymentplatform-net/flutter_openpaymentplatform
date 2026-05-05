@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -24,13 +26,27 @@ class _OpenPaymentPlatformCheckoutState
     extends State<OpenPaymentPlatformCheckout> {
   /// The WebViewController is used to control the WebView widget.
   late final WebViewController _webViewController;
+  late final OnRedirectCallback _externalUrlListener;
 
   @override
   void initState() {
     super.initState();
     // Initialize the WebView controller and start the payment process.
     _initWebViewController();
+
+    // After app-to-app 3DS return, load the returned URL back into WebView.
+    _externalUrlListener = (url) {
+      _webViewController.loadRequest(Uri.parse(url));
+    };
+    widget.controller.addExternalUrlListener(_externalUrlListener);
+
     _initializePayment();
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeExternalUrlListener(_externalUrlListener);
+    super.dispose();
   }
 
   /// Configures the WebViewController with JavaScript support and navigation handling.
@@ -50,27 +66,28 @@ class _OpenPaymentPlatformCheckoutState
   }
 
   /// Handles navigation requests and triggers appropriate callbacks based on the URL.
-  NavigationDecision _handleNavigationRequest(NavigationRequest request) {
+  FutureOr<NavigationDecision> _handleNavigationRequest(
+    NavigationRequest request,
+  ) async {
     final url = request.url;
 
-    // Check if the URL matches the success URL.
-    if (url.contains(widget.controller.paymentRequest.successUrl)) {
+    if (widget.controller.isExternalScheme(url)) {
+      // Custom-scheme redirects usually open external banking/3DS apps.
+      // WebView navigation is stopped, host app handles this URL externally.
+      widget.controller.onRedirectCallback?.call(url);
+      return NavigationDecision.prevent;
+    }
+
+    if (widget.controller.isSuccessUrl(url)) {
       widget.controller.onSuccessRedirect?.call(url);
-    }
-    // Check if the URL matches the error URL.
-    else if (widget.controller.paymentRequest.errorUrl != null &&
-        url.contains(widget.controller.paymentRequest.errorUrl!)) {
+    } else if (widget.controller.isErrorUrl(url)) {
       widget.controller.onErrorRedirect?.call(url);
-    }
-    // Check if the URL matches the cancel URL.
-    else if (widget.controller.paymentRequest.cancelUrl != null &&
-        url.contains(widget.controller.paymentRequest.cancelUrl!)) {
+    } else if (widget.controller.isCancelUrl(url)) {
       widget.controller.onCancelRedirect?.call(url);
-    }
-    // Handle any other redirection URLs.
-    else {
+    } else {
       widget.controller.onRedirectCallback?.call(url);
     }
+
     return NavigationDecision.navigate;
   }
 
@@ -105,6 +122,8 @@ class _OpenPaymentPlatformCheckoutState
       }
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

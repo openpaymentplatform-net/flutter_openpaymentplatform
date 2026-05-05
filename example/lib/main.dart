@@ -51,6 +51,14 @@ class _OpenPaymentPlatformDemoState extends State<OpenPaymentPlatformDemo> {
         ).showSnackBar(const SnackBar(content: Text("Payment Success")));
       },
     );
+
+    // Wire your deep-link listener here (app_links/uni_links) and call
+    // _controller.handleExternalRedirect(incomingUrl) on app return.
+  }
+
+  /// Call this from your app-level deep-link stream handler.
+  void onIncomingDeepLink(String url) {
+    _controller.handleExternalRedirect(url);
   }
 
   OpenPaymentPlatformRequest createOpenPaymentPlatformRequest() {
