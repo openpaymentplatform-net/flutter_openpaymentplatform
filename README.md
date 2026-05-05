@@ -202,7 +202,11 @@ forward incoming URL to checkout controller:
 
 ```dart
 void onIncomingDeepLink(String url) {
-  _controller.handleExternalRedirect(url);
+  if(urlsMatch(url, 'your-return-url-scheme://*')) {
+    _handleAppReturn(url);
+  }else if(urlsMatch(url, 'http*')) {
+    _controller.handleExternalRedirect(url);
+  }
 }
 ```
 

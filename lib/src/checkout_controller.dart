@@ -100,6 +100,8 @@ class CheckoutController {
         for (var listener in _externalUrlListener) {
           listener(url);
         }
+      }else{
+        throw Exception('Custom scheme URL received in handleExternalRedirect $url with no matching success/error/cancel URL. This may indicate a misconfiguration of the payment request or incorrect handling of external redirects in the host app.');
       }
     }
   }
